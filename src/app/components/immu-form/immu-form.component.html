@@ -1,0 +1,14 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Liczenie świadczeń</mat-card-title>
+  </mat-card-header>
+  <form [formGroup]="immuForm" (ngSubmit)="onSubmit()">
+    <mat-card-content>
+      <mat-form-field>
+        <mat-label for="name">Wpisz procedury W: </mat-label>
+        <input matInput id="name" type="text" [formControl]="immuWs" />
+      </mat-form-field>
+      <button mat-stroked-button type="submit">Licz</button>
+    </mat-card-content>
+  </form>
+</mat-card>

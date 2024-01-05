@@ -1,0 +1,18 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Kryteria W</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    @for (criterium of criteria; track criterium.name) {
+    <div>
+      <h3>{{ criterium.name }}</h3>
+      <ul>
+        @for (condition of criterium.conditions; track $index ) {
+          <li>{{ condition | appConditionFormatter }}</li>
+        }
+      </ul>
+      <p>Liczba punktów: {{ criterium.value }}</p>
+    </div>
+    }
+  </mat-card-content>
+</mat-card>

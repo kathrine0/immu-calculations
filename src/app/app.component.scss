@@ -1,0 +1,27 @@
+.main {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto;
+  grid-template-areas:
+    "form form criteria"
+    "result1 result2 criteria"
+    ". . criteria";
+  gap: 3rem;
+  margin: 3rem;
+}
+
+.form {
+  grid-area: form;
+}
+
+.result1 {
+  grid-area: result1;
+}
+
+.result2 {
+  grid-area: result2;
+}
+
+.criteria {
+  grid-area: criteria;
+}
