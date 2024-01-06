@@ -46,10 +46,14 @@ export class ImmuFormComponent {
   readonly separatorKeysCodes = [COMMA, SPACE, ENTER] as const;
 
   add(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
+    const value = (event.value || '')
+      .trim()
+      .split(' ')
+      .map((el) => el.trim())
+      .filter((el) => !!el);
 
-    if (value) {
-      this.immuWs.push({ name: value });
+    if (value.length) {
+      this.immuWs.push(...value.map((v) => ({ name: v })));
     }
 
     event.chipInput!.clear();
