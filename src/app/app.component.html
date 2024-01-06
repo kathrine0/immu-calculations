@@ -3,15 +3,22 @@
     (immuWsProvided)="onImmuWsProvided($event)"
     class="form"
   ></app-immu-form>
-  <app-immu-result
-    class="result1"
-    [immuResult]="resultMinAppointments()"
-    headerText="Opcja najmniej wizyt"
-  ></app-immu-result>
-  <app-immu-result
-    class="result2"
-    [immuResult]="resultMaxPoints()"
-    headerText="Opcja najwięcej pkt"
-  ></app-immu-result>
+  <div class="resultWrapper">
+    @for (result of results(); track result.title) {
+    <app-immu-result
+      class="result"
+      [immuResult]="result.result"
+      [headerText]="result.title"
+    ></app-immu-result>
+    }
+  </div>
+  <div class="suggestionsWrapper">
+    @for (suggestion of suggestions(); track $index) {
+    <app-immu-suggestions
+      class="suggestions"
+      [suggestions]="suggestion"
+    ></app-immu-suggestions>
+    }
+  </div>
   <app-immu-criteria class="criteria" [criteria]="criteria"></app-immu-criteria>
 </main>

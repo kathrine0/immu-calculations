@@ -5,7 +5,11 @@ import { Pipe, type PipeTransform } from '@angular/core';
   standalone: true,
 })
 export class ConditionFormatterPipe implements PipeTransform {
-  transform(conditions: string[]): string {
+  transform(conditions: string[] | undefined): string {
+    if (!conditions) {
+      return '';
+    }
+
     const dictionary = conditions.reduce((acc, val) => {
       if (val in acc) acc[val] += 1;
       else acc[val] = 1;

@@ -4,7 +4,8 @@
   grid-template-rows: auto;
   grid-template-areas:
     "form form criteria"
-    "result1 result2 criteria"
+    "result result criteria"
+    "suggestions suggestions criteria"
     ". . criteria";
   gap: 3rem;
   margin: 3rem;
@@ -14,14 +15,23 @@
   grid-area: form;
 }
 
-.result1 {
-  grid-area: result1;
-}
-
-.result2 {
-  grid-area: result2;
+.resultWrapper {
+  grid-area: result;
 }
 
 .criteria {
   grid-area: criteria;
+}
+
+.suggestionsWrapper {
+  grid-area: suggestions;
+}
+
+.resultWrapper, .suggestionsWrapper {
+  display: flex;
+  gap: 3rem;
+}
+
+.result, .suggestions {
+  flex: 1;
 }

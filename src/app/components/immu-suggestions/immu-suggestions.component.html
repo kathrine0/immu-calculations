@@ -1,0 +1,19 @@
+@if (suggestions?.length) {
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Sugestie</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <ul>
+        @for (suggestion of suggestions; track $index) {
+        <li>
+          Niewykorzystane {{ suggestion.unused | appConditionFormatter }}. Zleć
+          {{ suggestion.add.length > 1 ? "badania" : "badanie" }}
+          {{ suggestion.add | appConditionFormatter }} aby spełnić warunek
+          {{ suggestion.criterium.name }}
+        </li>
+        }
+      </ul>
+    </mat-card-content>
+  </mat-card>
+  }

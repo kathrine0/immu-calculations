@@ -8,30 +8,18 @@
       @for ( res of immuResultSignal()?.groups; track res.name) {
       <li>
         {{ res.name }} ({{ res.condition | appConditionFormatter }}) -
-        {{ res.value }}pkt ({{ res.value * POINT_TO_PLN }}zł)
+        {{ res.value }}pkt ({{ res.value | appPointsToPln}})
       </li>
       }
     </ul>
   </mat-card-content>
   <mat-card-footer>
     <p>
-      <b>Suma: {{ sum() }}pkt ({{ sum() * POINT_TO_PLN }}zł)</b>
+      <b>Suma: {{ sum() }}pkt ({{ sum() | appPointsToPln }})</b>
     </p>
 
-    @if (unused()) {
-    <p>Niewykorzystane: {{ unused() }}</p>
-    } @if(immuResultSignal()?.suggestions) {
-    <p>Sugestie</p>
-    <ul>
-      @for (suggestion of immuResultSignal()?.suggestions; track $index) {
-      <li>
-        Niewykorzystane {{ suggestion.unused | appConditionFormatter }}. Zleć
-        {{ suggestion.add.length > 1 ? "badania" : "badanie" }}
-        {{ suggestion.add | appConditionFormatter }} aby spełnić warunek
-        {{ suggestion.criterium.name }}
-      </li>
-      }
-    </ul>
+    @if (immuResultSignal()?.unused?.length) {
+    <p>Niewykorzystane: {{ immuResultSignal()?.unused | appConditionFormatter }}</p>
     }
   </mat-card-footer>
 </mat-card>
