@@ -2,13 +2,32 @@
   <mat-card-header>
     <mat-card-title>Liczenie świadczeń</mat-card-title>
   </mat-card-header>
-  <form [formGroup]="immuForm" (ngSubmit)="onSubmit()">
+  <form>
     <mat-card-content>
       <mat-form-field>
-        <mat-label for="name">Wpisz procedury W: </mat-label>
-        <input matInput id="name" type="text" [formControl]="immuWs" />
+        <mat-label>Wpisz procedury W:</mat-label>
+        <mat-chip-grid #chipGrid aria-label="Enter fruits">
+          @for (w of immuWs; track w) {
+          <mat-chip-row
+            (removed)="remove(w)"
+            [editable]="true"
+            (edited)="edit(w, $event)"
+          >
+            {{ w.name }}
+            <button matChipRemove [attr.aria-label]="'remove ' + w.name">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip-row>
+          }
+          <input
+            placeholder="Wpisz procedury W:"
+            [matChipInputFor]="chipGrid"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            [matChipInputAddOnBlur]="addOnBlur"
+            (matChipInputTokenEnd)="add($event)"
+          />
+        </mat-chip-grid>
       </mat-form-field>
-      <button mat-stroked-button type="submit">Licz</button>
     </mat-card-content>
   </form>
 </mat-card>
