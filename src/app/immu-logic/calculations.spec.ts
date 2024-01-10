@@ -1,135 +1,164 @@
-import { greedyFindCriteria } from './calculations';
-import { Criterium, ImmuResult, Suggestion } from './types';
+import { findOptimalCriteria } from './calculations';
+import { Criterium, ImmuResult } from './types';
 
-describe('calculations', () => {
-  it('should create correct groups', () => {
-    testDataForminAppointments.forEach((testElement) =>
-      expect(
-        greedyFindCriteria(testElement.input, mockCriteria, testElement.mode)
-          .groups
-      ).toEqual(testElement.result.groups)
-    );
-  });
-
-  it('should find unused elements', () => {
-    testDataForminAppointments.forEach((testElement) =>
-      expect(
-        greedyFindCriteria(testElement.input, mockCriteria, testElement.mode)
-          .unused
-      ).toEqual(testElement.result.unused)
-    );
-  });
-
-  it('should provide correct suggestions', () => {
-    testDataForminAppointments.forEach((testElement) =>
-      expect(
-        greedyFindCriteria(testElement.input, mockCriteria, testElement.mode)
-          .suggestions
-      ).toEqual(testElement.result.suggestions)
-    );
-  });
-});
-
-const testDataForminAppointments: Array<{
+const testData: Array<{
   input: string[];
-  mode: 'minAppointments' | 'maxPoints';
-  result: ImmuResult;
+  expectedValue: {
+    minAppointmentsResult: ImmuResult;
+    maxPointsResult: ImmuResult;
+  };
 }> = [
   {
     input: ['W1', 'w1', 'w1'],
-    mode: 'minAppointments',
-    result: {
-      groups: [{ condition: ['W1', 'W1', 'W1'], name: 'W12', value: 75 }],
-      unused: [],
-      suggestions: [],
-    },
-  },
-  {
-    input: ['W1', 'w1', 'w1'],
-    mode: 'maxPoints',
-    result: {
-      groups: [{ condition: ['W1', 'W1', 'W1'], name: 'W12', value: 75 }],
-      unused: [],
-      suggestions: [],
-    },
-  },
-  {
-    input: ['W1', 'w1', 'w1', 'w2', 'w3', 'w3'],
-    mode: 'minAppointments',
-    result: {
-      groups: [
-        { condition: ['W3', 'W3'], name: 'W14', value: 172 },
-        { condition: ['W1', 'W1', 'W1', 'W2'], name: 'W13', value: 133 },
-      ],
-      unused: [],
-      suggestions: [],
+    expectedValue: {
+      minAppointmentsResult: {
+        groups: [{ condition: ['W1', 'W1', 'W1'], name: 'W12', value: 75 }],
+        unused: [],
+        suggestions: [],
+        totalPoints: 75,
+      },
+      maxPointsResult: {
+        groups: [{ condition: ['W1', 'W1', 'W1'], name: 'W12', value: 75 }],
+        unused: [],
+        suggestions: [],
+        totalPoints: 75,
+      },
     },
   },
   {
     input: ['W1', 'w1', 'w1', 'w2', 'w3', 'w3'],
-    mode: 'maxPoints',
-    result: {
-      groups: [
-        { condition: ['W1', 'W1', 'W1'], name: 'W12', value: 75 },
-        { condition: ['W2'], name: 'W12', value: 75 },
-        { condition: ['W3'], name: 'W13', value: 133 },
-        { condition: ['W3'], name: 'W13', value: 133 },
-      ],
-      unused: [],
-      suggestions: [],
+    expectedValue: {
+      minAppointmentsResult: {
+        groups: [
+          { condition: ['W3', 'W3'], name: 'W14', value: 172 },
+          { condition: ['W1', 'W1', 'W1', 'W2'], name: 'W13', value: 133 },
+        ],
+        unused: [],
+        suggestions: [],
+        totalPoints: 305,
+      },
+      maxPointsResult: {
+        groups: [
+          { condition: ['W1', 'W1', 'W1'], name: 'W12', value: 75 },
+          { condition: ['W2'], name: 'W12', value: 75 },
+          { condition: ['W3'], name: 'W13', value: 133 },
+          { condition: ['W3'], name: 'W13', value: 133 },
+        ],
+        unused: [],
+        suggestions: [],
+        totalPoints: 416,
+      },
     },
   },
   {
     input: ['w3', 'w3', 'W1'],
-    mode: 'minAppointments',
-    result: {
-      groups: [{ condition: ['W3', 'W3'], name: 'W14', value: 172 }],
-      unused: ['W1'],
-      suggestions: [
-        {
-          unused: ['W1'],
-          add: ['W1', 'W1'],
-          criterium: { condition: ['W1', 'W1', 'W1'], name: 'W12', value: 75 },
-        },
-      ],
-    },
-  },
-  {
-    input: ['w3', 'w3', 'W1'],
-    mode: 'maxPoints',
-    result: {
-      groups: [
-        { condition: ['W3'], name: 'W13', value: 133 },
-        { condition: ['W3'], name: 'W13', value: 133 },
-      ],
-      unused: ['W1'],
-      suggestions: [
-        {
-          unused: ['W1'],
-          add: ['W1', 'W1'],
-          criterium: { condition: ['W1', 'W1', 'W1'], name: 'W12', value: 75 },
-        },
-      ],
+    expectedValue: {
+      minAppointmentsResult: {
+        groups: [{ condition: ['W3', 'W3'], name: 'W14', value: 172 }],
+        unused: ['W1'],
+        suggestions: [
+          {
+            unused: ['W1'],
+            add: ['W1', 'W1'],
+            criterium: {
+              condition: ['W1', 'W1', 'W1'],
+              name: 'W12',
+              value: 75,
+            },
+          },
+        ],
+        totalPoints: 172,
+      },
+      maxPointsResult: {
+        groups: [
+          { condition: ['W3'], name: 'W13', value: 133 },
+          { condition: ['W3'], name: 'W13', value: 133 },
+        ],
+        unused: ['W1'],
+        suggestions: [
+          {
+            unused: ['W1'],
+            add: ['W1', 'W1'],
+            criterium: {
+              condition: ['W1', 'W1', 'W1'],
+              name: 'W12',
+              value: 75,
+            },
+          },
+        ],
+        totalPoints: 266,
+      },
     },
   },
   {
     input: ['w1', 'w1', 'w5'],
-    mode: 'minAppointments',
-    result: {
-      groups: [],
-      unused: ['W1', 'W1', 'W5'],
-      suggestions: [
-        {
-          unused: ['W1', 'W1'],
-          add: ['W1'],
-          criterium: { condition: ['W1', 'W1', 'W1'], name: 'W12', value: 75 },
-        },
-        {
-          unused: ['W5'],
-          add: ['W5'],
-          criterium: { condition: ['W5', 'W5'], name: 'W12', value: 75 },
-        },
-      ],
+    expectedValue: {
+      minAppointmentsResult: {
+        groups: [],
+        unused: ['W1', 'W1', 'W5'],
+        suggestions: [
+          {
+            unused: ['W1', 'W1'],
+            add: ['W1'],
+            criterium: {
+              condition: ['W1', 'W1', 'W1'],
+              name: 'W12',
+              value: 75,
+            },
+          },
+          {
+            unused: ['W5'],
+            add: ['W5'],
+            criterium: { condition: ['W5', 'W5'], name: 'W12', value: 75 },
+          },
+        ],
+        totalPoints: 0,
+      },
+      maxPointsResult: {
+        groups: [],
+        unused: ['W1', 'W1', 'W5'],
+        suggestions: [
+          {
+            unused: ['W1', 'W1'],
+            add: ['W1'],
+            criterium: {
+              condition: ['W1', 'W1', 'W1'],
+              name: 'W12',
+              value: 75,
+            },
+          },
+          {
+            unused: ['W5'],
+            add: ['W5'],
+            criterium: { condition: ['W5', 'W5'], name: 'W12', value: 75 },
+          },
+        ],
+        totalPoints: 0,
+      },
+    },
+  },
+  {
+    input: ['w1', 'w1', 'w1', 'w2', 'w3'],
+    expectedValue: {
+      maxPointsResult: {
+        groups: [
+          { condition: ['W1', 'W1', 'W1'], name: 'W12', value: 75 },
+          { condition: ['W2'], name: 'W12', value: 75 },
+          { condition: ['W3'], name: 'W13', value: 133 },
+        ],
+        unused: [],
+        suggestions: [],
+        totalPoints: 283,
+      },
+      minAppointmentsResult: {
+        groups: [
+          { condition: ['W3'], name: 'W13', value: 133 },
+          { condition: ['W1', 'W1', 'W1', 'W2'], name: 'W13', value: 133 },
+        ],
+        unused: [],
+        suggestions: [],
+        totalPoints: 266,
+      },
     },
   },
 ];
@@ -151,3 +180,13 @@ const mockCriteria: Criterium[] = [
     value: 172,
   },
 ];
+
+describe('calculations', () => {
+  it.each(testData)(
+    'should find correct results for $input',
+    ({ input, expectedValue }) => {
+      const result = findOptimalCriteria(input, mockCriteria);
+      expect(result).toEqual(expectedValue);
+    }
+  );
+});

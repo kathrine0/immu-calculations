@@ -18,7 +18,8 @@ export type CriteriumMatch = {
 export type ImmuResult = {
   groups: FlatCriterium[];
   unused: string[];
-  suggestions: Suggestion[]
+  suggestions: Suggestion[];
+  totalPoints: number;
 }
 
 export type Suggestion = {

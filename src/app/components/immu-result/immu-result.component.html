@@ -5,7 +5,7 @@
   </mat-card-header>
   <mat-card-content>
     <ul>
-      @for ( res of immuResultSignal()?.groups; track res.name) {
+      @for ( res of groups(); track res.name) {
       <li>
         {{ res.name }} ({{ res.condition | appConditionFormatter }}) -
         {{ res.value }}pkt ({{ res.value | appPointsToPln}})
@@ -18,8 +18,8 @@
       <b>Suma: {{ sum() }}pkt ({{ sum() | appPointsToPln }})</b>
     </p>
 
-    @if (immuResultSignal()?.unused?.length) {
-    <p>Niewykorzystane: {{ immuResultSignal()?.unused | appConditionFormatter }}</p>
+    @if ( unused().length) {
+    <p>Niewykorzystane: {{ unused() | appConditionFormatter }}</p>
     }
   </mat-card-footer>
 </mat-card>

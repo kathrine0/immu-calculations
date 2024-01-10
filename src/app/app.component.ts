@@ -1,14 +1,14 @@
-import { Component, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
-import { ImmuFormComponent } from './components/immu-form/immu-form.component';
-import { greedyFindCriteria } from './immu-logic/calculations';
-import { CRITERIA } from './immu-logic/criteria';
-import { ImmuResultComponent } from './components/immu-result/immu-result.component';
-import { ImmuResult } from './immu-logic/types';
+import { Component, computed, signal } from '@angular/core';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import { RouterOutlet } from '@angular/router';
 import { ImmuCriteriaComponent } from './components/immu-criteria/immu-criteria.component';
+import { ImmuFormComponent } from './components/immu-form/immu-form.component';
+import { ImmuResultComponent } from './components/immu-result/immu-result.component';
 import { ImmuSuggestionsComponent } from './components/immu-suggestions/immu-suggestions.component';
+import { findOptimalCriteria } from './immu-logic/calculations';
+import { CRITERIA } from './immu-logic/criteria';
+import { ImmuResult } from './immu-logic/types';
 
 @Component({
   selector: 'app-root',
@@ -31,7 +31,6 @@ import { ImmuSuggestionsComponent } from './components/immu-suggestions/immu-sug
   ],
 })
 export class AppComponent {
-  // results = signal<Array<{ result: ImmuResult; title: string }>>([])
   private resultMinAppointments = signal<ImmuResult | undefined>(undefined);
   private resultMaxPoints = signal<ImmuResult | undefined>(undefined);
 
@@ -42,12 +41,9 @@ export class AppComponent {
   genericTitle = 'Propozycja rozliczenia';
 
   onImmuWsProvided(input: string[]) {
-    this.resultMinAppointments.set(
-      greedyFindCriteria(input, this.criteria, 'minAppointments')
-    );
-    this.resultMaxPoints.set(
-      greedyFindCriteria(input, this.criteria, 'maxPoints')
-    );
+    const result = findOptimalCriteria(input, this.criteria);
+    this.resultMaxPoints.set(result.maxPointsResult);
+    this.resultMinAppointments.set(result.minAppointmentsResult);
   }
 
   results = computed(() =>
@@ -73,7 +69,7 @@ export class AppComponent {
 
   suggestions = computed(() => {
     const suggestions = this.results().map(({ result }) => result?.suggestions);
-    const stringifiedSuggestions = suggestions.map(s => JSON.stringify(s));
+    const stringifiedSuggestions = suggestions.map((s) => JSON.stringify(s));
     const filteredSuggestions = suggestions.filter(
       (s, index) => stringifiedSuggestions.indexOf(JSON.stringify(s)) === index
     );

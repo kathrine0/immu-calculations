@@ -1,4 +1,8 @@
-import { compareArrays, subtractArrays } from './array-helpers';
+import {
+  compareArrays,
+  findPermutations,
+  subtractArrays,
+} from './array-helpers';
 import {
   Criterium,
   CriteriumMatch,
@@ -7,26 +11,45 @@ import {
   Suggestion,
 } from './types';
 
-export const greedyFindCriteria = (
+export const findOptimalCriteria = (
   input: string[],
-  criteria: Criterium[],
-  mode: 'minAppointments' | 'maxPoints'
-): ImmuResult => {
-  let criteriacp;
-
-  if (mode === 'minAppointments') {
-    criteriacp = [...criteria.sort((a, b) => b.value - a.value)];
-  } else {
-    criteriacp = [...criteria.sort((a, b) => a.value - b.value)];
-  }
-  const flatCriteria = flattenCriteria(criteriacp);
+  criteria: Criterium[]
+): { minAppointmentsResult: ImmuResult; maxPointsResult: ImmuResult } => {
   const inputToUpper = input.map((val) => val.toUpperCase());
+  const criteriaPermutations = findPermutations(criteria);
 
-  const groups = createGroups(inputToUpper, flatCriteria);
-  const unused = findUnused(inputToUpper, groups);
-  const suggestions = findSuggestions(unused, flatCriteria);
+  const possibleResults = criteriaPermutations.map((c) => {
+    const flatCriteria = flattenCriteria(c);
 
-  return { groups, unused, suggestions };
+    const groups = createGroups(inputToUpper, flatCriteria);
+    const unused = findUnused(inputToUpper, groups);
+    const suggestions = findSuggestions(unused, flatCriteria);
+    const totalPoints = groups.reduce((acc, val) => (acc += val.value), 0);
+
+    return { groups, unused, suggestions, totalPoints };
+  });
+
+  const minAppointmentsResult = possibleResults.reduce((acc, val) =>
+    acc &&
+    (acc.groups.length < val.groups.length ||
+      (acc.groups.length === val.groups.length &&
+        acc.totalPoints > val.totalPoints))
+      ? acc
+      : val
+  );
+  const maxPointsResult = possibleResults.reduce((acc, val) =>
+    acc &&
+    (acc.totalPoints > val.totalPoints ||
+      (acc.totalPoints === val.totalPoints &&
+        acc.groups.length < val.groups.length))
+      ? acc
+      : val
+  );
+
+  return {
+    minAppointmentsResult,
+    maxPointsResult,
+  };
 };
 
 const createGroups = (input: string[], flatCriteria: FlatCriterium[]) => {

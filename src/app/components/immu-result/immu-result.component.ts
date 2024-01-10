@@ -32,11 +32,7 @@ export class ImmuResultComponent {
 
   @Input() headerText: string = '';
 
-  sum = computed(
-    () =>
-      this.immuResultSignal()?.groups?.reduce(
-        (acc, val) => (acc += val.value),
-        0
-      ) || 0
-  );
+  groups = computed(() => this.immuResultSignal()?.groups || []);
+  unused = computed(() => this.immuResultSignal()?.unused || []);
+  sum = computed(() => this.immuResultSignal()?.totalPoints || 0);
 }
